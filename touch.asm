@@ -6,24 +6,19 @@
 ; *** without express written permission from the author.         ***
 ; *******************************************************************
 
+.op "PUSH","N","9$1 73 8$1 73"
+.op "POP","N","60 72 A$1 F0 B$1"
+.op "CALL","W","D4 H1 L1"
+.op "RTN","","D5"
+.op "MOV","NR","9$2 B$1 8$2 A$1"
+.op "MOV","NW","F8 H2 B$1 F8 L2 A$1"
+
 include    bios.inc
 include    kernel.inc
 
-           org     8000h
-           lbr     0ff00h
-           db      'touch',0
-           dw      9000h
-           dw      endrom+7000h
-           dw      2000h
-           dw      endrom-2000h
-           dw      2000h
-           db      0
- 
            org     2000h
-           br      start
-
-include    date.inc
-include    build.inc
+begin:     br      start
+           eever
            db      'Written by Michael H. Riley',0
 
 start:
@@ -66,17 +61,16 @@ good:      ldi     high fildes         ; get file descriptor
            plo     rf
            sep     scall               ; display it
            dw      o_msg
-           lbr     o_wrmboot           ; and return to os
+           ldi     0ch
+           sep     sret                ; and return to os
 mainlp:    mov     rf,flags            ; point to flags byte
            ldn     rf                  ; retrieve flags
            ori     16                  ; mark file as having been written to
            str     rf                  ; and put back into flags
 done:      sep     scall               ; close the file
            dw      o_close
+           ldi     0
            sep     sret                ; return to os
-
-
-
 
 errmsg:    db      'File not found',10,13,0
 fildes:    db      0,0,0,0
@@ -89,5 +83,9 @@ flags:     db      0
 
 endrom:    equ     $
 
+.suppress
+
 dta:       ds      512
+
+           end     begin
 
