@@ -13,8 +13,8 @@
 .op "MOV","NR","9$2 B$1 8$2 A$1"
 .op "MOV","NW","F8 H2 B$1 F8 L2 A$1"
 
-include    bios.inc
-include    kernel.inc
+#include    bios.inc
+#include    kernel.inc
 
            org     2000h
 begin:     br      start
@@ -50,7 +50,7 @@ good:      ldi     high fildes         ; get file descriptor
            phi     rd
            ldi     low fildes
            plo     rd
-           ldi     0                   ; flags for open
+           ldi     10h                 ; open a directory or a file 
            plo     r7
            sep     scall               ; attempt to open file
            dw      o_open
@@ -88,4 +88,3 @@ endrom:    equ     $
 dta:       ds      512
 
            end     begin
-
